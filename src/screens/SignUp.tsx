@@ -32,6 +32,9 @@ const Subtitle = styled(FatLink)`
 
 const SignUp = () => {
   const { register, handleSubmit, watch } = useForm<ISignupForm>();
+  const onValid = (form: ISignupForm) => {
+    console.log(form);
+  };
   return (
     <AuthLayout>
       <PageTitle title="Sign up" />
@@ -42,11 +45,27 @@ const SignUp = () => {
             Sign up to see photos and videos from your friends.
           </Subtitle>
         </HeaderContainer>
-        <form>
-          <Input type="text" placeholder="Email" />
-          <Input type="text" placeholder="Name" />
-          <Input type="text" placeholder="Username" />
-          <Input type="password" placeholder="Password" />
+        <form onSubmit={handleSubmit(onValid)}>
+          <Input
+            {...register("email", { required: true })}
+            type="text"
+            placeholder="Email"
+          />
+          <Input
+            {...register("name", { required: true })}
+            type="text"
+            placeholder="Name"
+          />
+          <Input
+            {...register("username", { required: true, minLength: 5 })}
+            type="text"
+            placeholder="Username"
+          />
+          <Input
+            {...register("password", { required: true, minLength: 5 })}
+            type="password"
+            placeholder="Password"
+          />
           <Button type="submit" value="Log in" />
         </form>
       </FormBox>
