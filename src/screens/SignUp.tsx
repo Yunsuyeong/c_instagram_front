@@ -10,12 +10,17 @@ import Input from "../components/auth/Input";
 import { FatLink } from "../components/shared";
 import routes from "../routes";
 import PageTitle from "../components/PageTitle";
+import { gql, useMutation } from "@apollo/client";
+import { CreateAccountMutation } from "../generated/graphql";
+import { useHistory } from "react-router-dom";
 
 interface ISignupForm {
+  firstname: string;
+  lastname: string;
   email: string;
-  name: string;
   username: string;
-  password: number;
+  password: string;
+  result: string;
 }
 
 const HeaderContainer = styled.div`
@@ -30,10 +35,77 @@ const Subtitle = styled(FatLink)`
   margin-top: 10px;
 `;
 
+const Create_Account_Mutation = gql`
+  mutation createAccount(
+    $firstname: String!
+    $lastname: String
+    $email: String!
+    $username: String!
+    $password: String!
+  ) {
+    createAccount(
+      firstName: $firstname
+      lastName: $lastname
+      email: $email
+      username: $username
+      password: $password
+    ) {
+      ok
+      error
+    }
+  }
+`;
+
 const SignUp = () => {
-  const { register, handleSubmit, watch } = useForm<ISignupForm>();
-  const onValid = (form: ISignupForm) => {
-    console.log(form);
+  const history = useHistory();
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid, errors },
+    setError,
+    getValues,
+  } = useForm<ISignupForm>({
+    mode: "onChange",
+  });
+  const onCompleted = (data: CreateAccountMutation) => {
+    const { username, password } = getValues();
+    const {
+      createAccount: { ok, error },
+    } = data;
+    if (!ok) {
+      return setError("result", {
+        message: error ? error : "",
+      });
+    }
+    history.push(routes.home, {
+      message: "Account craeted. Please log in.",
+      username,
+      password,
+    });
+  };
+  const [createAccount, { loading }] = useMutation<CreateAccountMutation>(
+    Create_Account_Mutation,
+    { onCompleted }
+  );
+  const onValid = ({
+    firstname,
+    lastname,
+    email,
+    username,
+    password,
+  }: ISignupForm) => {
+    if (loading) {
+      return;
+    }
+    createAccount({
+      variables: {
+        firstname,
+        lastname,
+        email,
+        username,
+        password,
+      },
+    });
   };
   return (
     <AuthLayout>
@@ -47,26 +119,37 @@ const SignUp = () => {
         </HeaderContainer>
         <form onSubmit={handleSubmit(onValid)}>
           <Input
-            {...register("email", { required: true })}
+            {...register("firstname", { required: "First name is required" })}
+            type="text"
+            placeholder="Firstname"
+          />
+          <Input {...register("lastname")} type="text" placeholder="Lastname" />
+          <Input
+            {...register("email", { required: "Email isrequired" })}
             type="text"
             placeholder="Email"
           />
           <Input
-            {...register("name", { required: true })}
-            type="text"
-            placeholder="Name"
-          />
-          <Input
-            {...register("username", { required: true, minLength: 5 })}
+            {...register("username", {
+              required: "Username is required",
+              minLength: 3,
+            })}
             type="text"
             placeholder="Username"
           />
           <Input
-            {...register("password", { required: true, minLength: 5 })}
+            {...register("password", {
+              required: "Password is required",
+              minLength: 5,
+            })}
             type="password"
             placeholder="Password"
           />
-          <Button type="submit" value="Log in" />
+          <Button
+            type="submit"
+            value={loading ? "Loading..." : "Sign up"}
+            disabled={!isValid || loading}
+          />
         </form>
       </FormBox>
       <BottomBox cta="Have an account?" linkText="Log in" link={routes.home} />

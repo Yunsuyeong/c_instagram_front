@@ -1,5 +1,4 @@
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
-import { useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
