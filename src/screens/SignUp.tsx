@@ -125,7 +125,7 @@ const SignUp = () => {
           />
           <Input {...register("lastname")} type="text" placeholder="Lastname" />
           <Input
-            {...register("email", { required: "Email isrequired" })}
+            {...register("email", { required: "Email is required" })}
             type="text"
             placeholder="Email"
           />
