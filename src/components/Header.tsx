@@ -4,7 +4,7 @@ import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faCompass, faHome, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useReactiveVar } from "@apollo/client";
 import { isLoggedInVar } from "../apollo";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import routes from "../routes";
 import useUser from "../hooks/useUser";
 import Avatar from "./Avatar";
@@ -36,6 +36,7 @@ const IconsContainer = styled.div`
 
 const Icon = styled.span`
   margin-left: 15px;
+  cursor: pointer;
 `;
 
 const Button = styled.span`
@@ -47,6 +48,7 @@ const Button = styled.span`
 `;
 
 const Header = () => {
+  const history = useHistory();
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const { data } = useUser();
   return (
@@ -58,7 +60,7 @@ const Header = () => {
         <Column>
           {isLoggedIn ? (
             <IconsContainer>
-              <Icon>
+              <Icon onClick={() => history.push("/")}>
                 <FontAwesomeIcon icon={faHome} size="lg" />
               </Icon>
               <Icon>

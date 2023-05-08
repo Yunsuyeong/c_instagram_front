@@ -181,17 +181,20 @@ export type MutationUploadPhotoArgs = {
 export type MutationResponse = {
   __typename?: 'MutationResponse';
   error?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
   ok: Scalars['Boolean'];
 };
 
 export type Photo = {
   __typename?: 'Photo';
   caption?: Maybe<Scalars['String']>;
-  comments: Scalars['Int'];
+  commentNumber: Scalars['Int'];
+  comments?: Maybe<Array<Maybe<Comment>>>;
   createdAt: Scalars['String'];
   file: Scalars['String'];
   hashtags?: Maybe<Array<Maybe<Hashtag>>>;
   id: Scalars['Int'];
+  isLiked: Scalars['Boolean'];
   isMine: Scalars['Boolean'];
   likes: Scalars['Int'];
   updatedAt: Scalars['String'];
@@ -223,6 +226,11 @@ export type QuerySearchPhotosArgs = {
 
 export type QuerySearchUsersArgs = {
   keyword: Scalars['String'];
+};
+
+
+export type QuerySeeFeedArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -322,10 +330,24 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type ToggleLikeMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ToggleLikeMutation = { __typename?: 'Mutation', toggleLike: { __typename?: 'MutationResponse', ok: boolean, error?: string | null } };
+
+export type BsNameFragment = { __typename?: 'Photo', isLiked: boolean, likes: number };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username: string, avatar?: string | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string, avatar?: string | null } | null };
+
+export type SeeFeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SeeFeedQuery = { __typename?: 'Query', seeFeed?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, createdAt: string, isMine: boolean, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null } | null> | null };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -346,10 +368,50 @@ export type CreateAccountMutationVariables = Exact<{
 
 export type CreateAccountMutation = { __typename?: 'Mutation', createAccount: { __typename?: 'MutationResponse', ok: boolean, error?: string | null } };
 
+export const BsNameFragmentDoc = gql`
+    fragment BSName on Photo {
+  isLiked
+  likes
+}
+    `;
+export const ToggleLikeDocument = gql`
+    mutation toggleLike($id: Int!) {
+  toggleLike(id: $id) {
+    ok
+    error
+  }
+}
+    `;
+export type ToggleLikeMutationFn = Apollo.MutationFunction<ToggleLikeMutation, ToggleLikeMutationVariables>;
 
+/**
+ * __useToggleLikeMutation__
+ *
+ * To run a mutation, you first call `useToggleLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleLikeMutation, { data, loading, error }] = useToggleLikeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useToggleLikeMutation(baseOptions?: Apollo.MutationHookOptions<ToggleLikeMutation, ToggleLikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleLikeMutation, ToggleLikeMutationVariables>(ToggleLikeDocument, options);
+      }
+export type ToggleLikeMutationHookResult = ReturnType<typeof useToggleLikeMutation>;
+export type ToggleLikeMutationResult = Apollo.MutationResult<ToggleLikeMutation>;
+export type ToggleLikeMutationOptions = Apollo.BaseMutationOptions<ToggleLikeMutation, ToggleLikeMutationVariables>;
 export const MeDocument = gql`
     query me {
   me {
+    id
     username
     avatar
   }
@@ -382,6 +444,57 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const SeeFeedDocument = gql`
+    query seeFeed {
+  seeFeed {
+    id
+    user {
+      username
+      avatar
+    }
+    file
+    caption
+    likes
+    comments {
+      id
+      user {
+        username
+        avatar
+      }
+    }
+    createdAt
+    isMine
+    isLiked
+  }
+}
+    `;
+
+/**
+ * __useSeeFeedQuery__
+ *
+ * To run a query within a React component, call `useSeeFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeFeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSeeFeedQuery(baseOptions?: Apollo.QueryHookOptions<SeeFeedQuery, SeeFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeFeedQuery, SeeFeedQueryVariables>(SeeFeedDocument, options);
+      }
+export function useSeeFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeFeedQuery, SeeFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeFeedQuery, SeeFeedQueryVariables>(SeeFeedDocument, options);
+        }
+export type SeeFeedQueryHookResult = ReturnType<typeof useSeeFeedQuery>;
+export type SeeFeedLazyQueryHookResult = ReturnType<typeof useSeeFeedLazyQuery>;
+export type SeeFeedQueryResult = Apollo.QueryResult<SeeFeedQuery, SeeFeedQueryVariables>;
 export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
