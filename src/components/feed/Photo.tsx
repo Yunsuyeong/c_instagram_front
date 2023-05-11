@@ -111,8 +111,22 @@ const Photo = ({
       },
     } = result;
     if (ok) {
-      const fragmentId = `Photo:${id}`;
-      const fragment = gql`
+      const photoId = `Photo:${id}`;
+      cache.modify({
+        id: photoId,
+        fields: {
+          isLiked(prev: boolean) {
+            return !prev;
+          },
+          likes(prev: number) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
+      /* const fragment = gql`
         fragment BSName on Photo {
           isLiked
           likes
@@ -132,7 +146,7 @@ const Photo = ({
             likes: isLiked ? likes - 1 : likes + 1,
           },
         });
-      }
+      } */
     }
   };
   const [toggleLike, { loading }] = useMutation(Toggle_Like_Mutation, {
