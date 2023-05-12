@@ -188,6 +188,7 @@ const Photo = ({
           caption={caption}
           comments={comments}
           commentNumber={commentNumber}
+          photoId={id}
         />
       </PhotoData>
     </PhotoContainer>
