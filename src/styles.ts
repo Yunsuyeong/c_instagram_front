@@ -30,6 +30,7 @@ export const GlobalStyles = createGlobalStyle`
         font-family:'Open Sans', sans-serif;
     }
     a {
+      color:inherit;
       text-decoration: none;
     }
 `;

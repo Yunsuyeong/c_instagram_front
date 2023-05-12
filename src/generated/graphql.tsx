@@ -354,6 +354,10 @@ export type ToggleLikeMutationVariables = Exact<{
 
 export type ToggleLikeMutation = { __typename?: 'Mutation', toggleLike: { __typename?: 'MutationResponse', ok: boolean, error?: string | null } };
 
+export type PhotoFragmentFragment = { __typename?: 'Photo', id: number, file: string, likes: number, commentNumber: number, isLiked: boolean };
+
+export type CommentFragmentFragment = { __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -362,7 +366,7 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: nu
 export type SeeFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SeeFeedQuery = { __typename?: 'Query', seeFeed?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isMine: boolean, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null } | null> | null };
+export type SeeFeedQuery = { __typename?: 'Query', seeFeed?: Array<{ __typename?: 'Photo', caption?: string | null, createdAt: string, isMine: boolean, id: number, file: string, likes: number, commentNumber: number, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null } | null> | null };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -371,6 +375,13 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResult', ok: boolean, token?: string | null, error?: string | null } };
+
+export type SeeProfileQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, likes: number, commentNumber: number, isLiked: boolean } | null> | null } | null };
 
 export type CreateAccountMutationVariables = Exact<{
   firstname: Scalars['String'];
@@ -393,6 +404,27 @@ export const BsNameFragmentDoc = gql`
     username
     avatar
   }
+}
+    `;
+export const PhotoFragmentFragmentDoc = gql`
+    fragment PhotoFragment on Photo {
+  id
+  file
+  likes
+  commentNumber
+  isLiked
+}
+    `;
+export const CommentFragmentFragmentDoc = gql`
+    fragment CommentFragment on Comment {
+  id
+  user {
+    username
+    avatar
+  }
+  payload
+  isMine
+  createdAt
 }
     `;
 export const DeleteCommentDocument = gql`
@@ -537,31 +569,21 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const SeeFeedDocument = gql`
     query seeFeed {
   seeFeed {
-    id
+    ...PhotoFragment
     user {
       username
       avatar
     }
-    file
     caption
-    likes
     comments {
-      id
-      user {
-        username
-        avatar
-      }
-      payload
-      isMine
-      createdAt
+      ...CommentFragment
     }
-    commentNumber
     createdAt
     isMine
-    isLiked
   }
 }
-    `;
+    ${PhotoFragmentFragmentDoc}
+${CommentFragmentFragmentDoc}`;
 
 /**
  * __useSeeFeedQuery__
@@ -625,6 +647,53 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const SeeProfileDocument = gql`
+    query seeProfile($username: String!) {
+  seeProfile(username: $username) {
+    id
+    firstName
+    lastName
+    username
+    bio
+    avatar
+    photos {
+      ...PhotoFragment
+    }
+    totalFollowing
+    totalFollowers
+    isMe
+    isFollowing
+  }
+}
+    ${PhotoFragmentFragmentDoc}`;
+
+/**
+ * __useSeeProfileQuery__
+ *
+ * To run a query within a React component, call `useSeeProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeProfileQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useSeeProfileQuery(baseOptions: Apollo.QueryHookOptions<SeeProfileQuery, SeeProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeProfileQuery, SeeProfileQueryVariables>(SeeProfileDocument, options);
+      }
+export function useSeeProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeProfileQuery, SeeProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeProfileQuery, SeeProfileQueryVariables>(SeeProfileDocument, options);
+        }
+export type SeeProfileQueryHookResult = ReturnType<typeof useSeeProfileQuery>;
+export type SeeProfileLazyQueryHookResult = ReturnType<typeof useSeeProfileLazyQuery>;
+export type SeeProfileQueryResult = Apollo.QueryResult<SeeProfileQuery, SeeProfileQueryVariables>;
 export const CreateAccountDocument = gql`
     mutation createAccount($firstname: String!, $lastname: String, $email: String!, $username: String!, $password: String!) {
   createAccount(
