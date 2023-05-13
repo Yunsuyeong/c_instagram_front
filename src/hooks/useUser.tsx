@@ -3,12 +3,14 @@ import { useEffect } from "react";
 import { isLoggedInVar, logUserOut } from "../apollo";
 import { MeQuery } from "../generated/graphql";
 
-const Me_Query = gql`
+export const Me_Query = gql`
   query me {
     me {
       id
       username
       avatar
+      totalFollowing
+      totalFollowers
     }
   }
 `;
