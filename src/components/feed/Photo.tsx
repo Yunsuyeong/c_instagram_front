@@ -57,6 +57,7 @@ const Username = styled(FatText)`
 
 const PhotoFile = styled.img`
   min-width: 100%;
+  height: 50%;
 `;
 
 const PhotoData = styled.div`
@@ -159,10 +160,10 @@ const Photo = ({
   return (
     <PhotoContainer key={id}>
       <PhotoHeader>
-        <Link to={`/users/${user?.username}`}>
+        <Link to={`/${user?.username}`}>
           <Avatar lg url={user?.avatar} />
         </Link>
-        <Link to={`/users/${user?.username}`}>
+        <Link to={`/${user?.username}`}>
           <Username>{user?.username}</Username>
         </Link>
       </PhotoHeader>

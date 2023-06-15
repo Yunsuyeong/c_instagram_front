@@ -230,7 +230,7 @@ export type QuerySearchUsersArgs = {
 
 
 export type QuerySeeFeedArgs = {
-  offset?: InputMaybe<Scalars['Int']>;
+  offset: Scalars['Int'];
 };
 
 
@@ -361,9 +361,20 @@ export type CommentFragmentFragment = { __typename?: 'Comment', id: number, payl
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string, avatar?: string | null } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string, avatar?: string | null, totalFollowing: number, totalFollowers: number } | null };
 
-export type SeeFeedQueryVariables = Exact<{ [key: string]: never; }>;
+export type EditProfileMutationVariables = Exact<{
+  username?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  bio?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'MutationResponse', ok: boolean, error?: string | null } };
+
+export type SeeFeedQueryVariables = Exact<{
+  offset: Scalars['Int'];
+}>;
 
 
 export type SeeFeedQuery = { __typename?: 'Query', seeFeed?: Array<{ __typename?: 'Photo', caption?: string | null, createdAt: string, isMine: boolean, id: number, file: string, likes: number, commentNumber: number, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null } | null> | null };
@@ -550,6 +561,8 @@ export const MeDocument = gql`
     id
     username
     avatar
+    totalFollowing
+    totalFollowers
   }
 }
     `;
@@ -580,9 +593,45 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const EditProfileDocument = gql`
+    mutation editProfile($username: String, $email: String, $bio: String) {
+  editProfile(username: $username, email: $email, bio: $bio) {
+    ok
+    error
+  }
+}
+    `;
+export type EditProfileMutationFn = Apollo.MutationFunction<EditProfileMutation, EditProfileMutationVariables>;
+
+/**
+ * __useEditProfileMutation__
+ *
+ * To run a mutation, you first call `useEditProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editProfileMutation, { data, loading, error }] = useEditProfileMutation({
+ *   variables: {
+ *      username: // value for 'username'
+ *      email: // value for 'email'
+ *      bio: // value for 'bio'
+ *   },
+ * });
+ */
+export function useEditProfileMutation(baseOptions?: Apollo.MutationHookOptions<EditProfileMutation, EditProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditProfileMutation, EditProfileMutationVariables>(EditProfileDocument, options);
+      }
+export type EditProfileMutationHookResult = ReturnType<typeof useEditProfileMutation>;
+export type EditProfileMutationResult = Apollo.MutationResult<EditProfileMutation>;
+export type EditProfileMutationOptions = Apollo.BaseMutationOptions<EditProfileMutation, EditProfileMutationVariables>;
 export const SeeFeedDocument = gql`
-    query seeFeed {
-  seeFeed {
+    query seeFeed($offset: Int!) {
+  seeFeed(offset: $offset) {
     ...PhotoFragment
     user {
       username
@@ -611,10 +660,11 @@ ${CommentFragmentFragmentDoc}`;
  * @example
  * const { data, loading, error } = useSeeFeedQuery({
  *   variables: {
+ *      offset: // value for 'offset'
  *   },
  * });
  */
-export function useSeeFeedQuery(baseOptions?: Apollo.QueryHookOptions<SeeFeedQuery, SeeFeedQueryVariables>) {
+export function useSeeFeedQuery(baseOptions: Apollo.QueryHookOptions<SeeFeedQuery, SeeFeedQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<SeeFeedQuery, SeeFeedQueryVariables>(SeeFeedDocument, options);
       }

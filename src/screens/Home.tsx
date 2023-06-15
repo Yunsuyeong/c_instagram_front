@@ -5,8 +5,8 @@ import { Comment_Fragment, Photo_Fragment } from "../fragments";
 import { SeeFeedQuery } from "../generated/graphql";
 
 const Feed_Query = gql`
-  query seeFeed {
-    seeFeed {
+  query seeFeed($offset: Int!) {
+    seeFeed(offset: $offset) {
       ...PhotoFragment
       user {
         username
@@ -25,7 +25,12 @@ const Feed_Query = gql`
 `;
 
 const Home = () => {
-  const { data } = useQuery<SeeFeedQuery>(Feed_Query);
+  const { data } = useQuery<SeeFeedQuery>(Feed_Query, {
+    variables: {
+      offset: 0,
+    },
+  });
+  console.log(data);
   return (
     <div>
       <PageTitle title="Home" />

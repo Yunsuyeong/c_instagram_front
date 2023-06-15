@@ -1,7 +1,7 @@
 import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/auth/Button";
 import PageTitle from "../components/PageTitle";
@@ -42,7 +42,7 @@ const Row = styled.div`
 `;
 
 const Username = styled.h3`
-  font-size: 28px;
+  font-size: 16px;
   font-weight: 400;
 `;
 
@@ -147,6 +147,7 @@ const Unfollow_User_Mutation = gql`
 `;
 
 const Profile = () => {
+  const history = useHistory();
   const client = useApolloClient();
   const { username } = useParams<ProfileParams>();
   const { data: userData } = useUser();
@@ -242,7 +243,13 @@ const Profile = () => {
           <Row>
             <Username>{data?.seeProfile?.username}</Username>
             {data?.seeProfile?.isMe ? (
-              <ProfileButton>Edit Profile</ProfileButton>
+              <ProfileButton
+                onClick={() =>
+                  history.push(`/accounts/edit/${data?.seeProfile?.username}`)
+                }
+              >
+                Edit Profile
+              </ProfileButton>
             ) : data?.seeProfile?.isFollowing ? (
               <ProfileButton onClick={() => unfollowUser()}>
                 Unfollow
@@ -253,6 +260,11 @@ const Profile = () => {
           </Row>
           <Row>
             <List>
+              <Item>
+                <span>
+                  <Value>{data?.seeProfile?.photos?.length}</Value> 게시물
+                </span>
+              </Item>
               <Item>
                 <span>
                   <Value>{data?.seeProfile?.totalFollowers}</Value> followers
