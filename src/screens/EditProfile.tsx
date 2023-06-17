@@ -10,6 +10,7 @@ import styled from "styled-components";
 import { faUserPen } from "@fortawesome/free-solid-svg-icons";
 import { gql, useMutation } from "@apollo/client";
 import { EditProfileMutation } from "../generated/graphql";
+import useUser from "../hooks/useUser";
 
 interface IParams {
   username: string;
@@ -55,6 +56,8 @@ const Edit_Profile_Mutation = gql`
 
 const EditProfile = () => {
   const history = useHistory();
+  const { data: userData } = useUser();
+  console.log(userData);
   const { username } = useParams<IParams>();
   const {
     register,
@@ -66,10 +69,12 @@ const EditProfile = () => {
     mode: "onChange",
     defaultValues: {
       username,
+      email: userData?.me?.email,
+      bio: userData?.me?.bio!,
     },
   });
   const onCompleted = (data: EditProfileMutation) => {
-    const { username, email, bio } = getValues();
+    const { username: editUsername, email, bio } = getValues();
     const {
       editProfile: { ok, error },
     } = data;
@@ -78,7 +83,7 @@ const EditProfile = () => {
         message: error ? error : "",
       });
     }
-    history.push(`/users/${username}`, {
+    history.push(`${editUsername}`, {
       message: "Profile Edited",
       username,
       email,

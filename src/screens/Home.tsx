@@ -30,7 +30,6 @@ const Home = () => {
       offset: 0,
     },
   });
-  console.log(data);
   return (
     <div>
       <PageTitle title="Home" />

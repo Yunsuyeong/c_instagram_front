@@ -8,6 +8,8 @@ export const Me_Query = gql`
     me {
       id
       username
+      email
+      bio
       avatar
       totalFollowing
       totalFollowers

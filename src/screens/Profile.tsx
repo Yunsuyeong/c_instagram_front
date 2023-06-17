@@ -74,6 +74,7 @@ const Photo = styled.div<{ bg?: string }>`
   position: relative;
   background-image: url(${(props) => props.bg});
   background-size: cover;
+  cursor: pointer;
 `;
 
 const Icons = styled.div`
@@ -287,7 +288,11 @@ const Profile = () => {
       </Header>
       <Grid>
         {data?.seeProfile?.photos?.map((photo) => (
-          <Photo key={photo?.id} bg={photo?.file}>
+          <Photo
+            onClick={() => history.push(`/p/${photo?.id}`)}
+            key={photo?.id}
+            bg={photo?.file}
+          >
             <Icons>
               <Icon>
                 <FontAwesomeIcon icon={faHeart} />
