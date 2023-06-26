@@ -3,23 +3,19 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { CreateCommentMutation } from "../../generated/graphql";
 import useUser from "../../hooks/useUser";
-import { FatText } from "../shared";
-import Comment from "./Comment";
 
 export interface ICommentForm {
   payload: string;
 }
 
 interface ICommentsProps {
-  author?: string;
-  caption?: string | null;
-  commentNumber?: number;
-  comments?: any;
   photoId?: number;
 }
 
 const CommentsContainer = styled.div`
-  margin-top: 20px;
+  width: 40%;
+  position: absolute;
+  bottom: 10px;
 `;
 
 const CommentCount = styled.span`
@@ -54,13 +50,7 @@ const Create_Comment_Mutation = gql`
   }
 `;
 
-const Comments = ({
-  author,
-  caption,
-  commentNumber,
-  comments,
-  photoId,
-}: ICommentsProps) => {
+const PostComment = ({ photoId }: ICommentsProps) => {
   const { data: userData } = useUser();
   const { register, handleSubmit, setValue, getValues } =
     useForm<ICommentForm>();
@@ -131,20 +121,6 @@ const Comments = ({
   };
   return (
     <CommentsContainer>
-      <Comment author={author} payload={caption} />
-      <CommentCount>
-        {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
-      </CommentCount>
-      {comments?.map((comment: any) => (
-        <Comment
-          key={comment.id}
-          id={comment.id}
-          photoId={photoId}
-          author={comment?.user?.username}
-          payload={comment?.payload}
-          isMine={comment?.isMine}
-        />
-      ))}
       <PostCommentContainer>
         <form onSubmit={handleSubmit(onValid)}>
           <PostCommentInput
@@ -158,4 +134,4 @@ const Comments = ({
   );
 };
 
-export default Comments;
+export default PostComment;

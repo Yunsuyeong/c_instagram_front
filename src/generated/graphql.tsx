@@ -392,7 +392,7 @@ export type SeePhotoQueryVariables = Exact<{
 }>;
 
 
-export type SeePhotoQuery = { __typename?: 'Query', seePhoto?: { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', payload: string, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null, hashtags?: Array<{ __typename?: 'Hashtag', hashtag: string } | null> | null } | null };
+export type SeePhotoQuery = { __typename?: 'Query', seePhoto?: { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string } | null> | null } | null };
 
 export type SeeProfileQueryVariables = Exact<{
   username: Scalars['String'];
@@ -737,13 +737,16 @@ export const SeePhotoDocument = gql`
         username
         avatar
       }
+      id
       payload
       createdAt
     }
     hashtags {
+      id
       hashtag
     }
     createdAt
+    isLiked
   }
 }
     `;

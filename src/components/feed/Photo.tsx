@@ -57,6 +57,7 @@ const Username = styled(FatText)`
 
 const PhotoFile = styled.img`
   min-width: 100%;
+  max-width: 40vw;
   height: 50%;
 `;
 
