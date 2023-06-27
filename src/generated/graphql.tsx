@@ -415,6 +415,21 @@ export type UnfollowUserMutationVariables = Exact<{
 
 export type UnfollowUserMutation = { __typename?: 'Mutation', unfollowUser: { __typename?: 'MutationResponse', ok: boolean } };
 
+export type SeeFollowersQueryVariables = Exact<{
+  username: Scalars['String'];
+  page: Scalars['Int'];
+}>;
+
+
+export type SeeFollowersQuery = { __typename?: 'Query', seeFollowers: { __typename?: 'SeeFollowersResult', ok: boolean, totalPages?: number | null, followers?: Array<{ __typename?: 'User', id: number, username: string, firstName: string, lastName?: string | null, bio?: string | null, isFollowing: boolean, avatar?: string | null } | null> | null } };
+
+export type SeeFollowingQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type SeeFollowingQuery = { __typename?: 'Query', seeFollowing: { __typename?: 'SeeFollowingResult', ok: boolean, following?: Array<{ __typename?: 'User', id: number, username: string, firstName: string, lastName?: string | null, bio?: string | null, isFollowing: boolean, avatar?: string | null } | null> | null } };
+
 export type CreateAccountMutationVariables = Exact<{
   firstname: Scalars['String'];
   lastname?: InputMaybe<Scalars['String']>;
@@ -891,6 +906,96 @@ export function useUnfollowUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnfollowUserMutationHookResult = ReturnType<typeof useUnfollowUserMutation>;
 export type UnfollowUserMutationResult = Apollo.MutationResult<UnfollowUserMutation>;
 export type UnfollowUserMutationOptions = Apollo.BaseMutationOptions<UnfollowUserMutation, UnfollowUserMutationVariables>;
+export const SeeFollowersDocument = gql`
+    query seeFollowers($username: String!, $page: Int!) {
+  seeFollowers(username: $username, page: $page) {
+    ok
+    followers {
+      id
+      username
+      firstName
+      lastName
+      bio
+      isFollowing
+      avatar
+    }
+    totalPages
+  }
+}
+    `;
+
+/**
+ * __useSeeFollowersQuery__
+ *
+ * To run a query within a React component, call `useSeeFollowersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeFollowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeFollowersQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *      page: // value for 'page'
+ *   },
+ * });
+ */
+export function useSeeFollowersQuery(baseOptions: Apollo.QueryHookOptions<SeeFollowersQuery, SeeFollowersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeFollowersQuery, SeeFollowersQueryVariables>(SeeFollowersDocument, options);
+      }
+export function useSeeFollowersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeFollowersQuery, SeeFollowersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeFollowersQuery, SeeFollowersQueryVariables>(SeeFollowersDocument, options);
+        }
+export type SeeFollowersQueryHookResult = ReturnType<typeof useSeeFollowersQuery>;
+export type SeeFollowersLazyQueryHookResult = ReturnType<typeof useSeeFollowersLazyQuery>;
+export type SeeFollowersQueryResult = Apollo.QueryResult<SeeFollowersQuery, SeeFollowersQueryVariables>;
+export const SeeFollowingDocument = gql`
+    query seeFollowing($username: String!) {
+  seeFollowing(username: $username) {
+    ok
+    following {
+      id
+      username
+      firstName
+      lastName
+      bio
+      isFollowing
+      avatar
+    }
+  }
+}
+    `;
+
+/**
+ * __useSeeFollowingQuery__
+ *
+ * To run a query within a React component, call `useSeeFollowingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeFollowingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeFollowingQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useSeeFollowingQuery(baseOptions: Apollo.QueryHookOptions<SeeFollowingQuery, SeeFollowingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeFollowingQuery, SeeFollowingQueryVariables>(SeeFollowingDocument, options);
+      }
+export function useSeeFollowingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeFollowingQuery, SeeFollowingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeFollowingQuery, SeeFollowingQueryVariables>(SeeFollowingDocument, options);
+        }
+export type SeeFollowingQueryHookResult = ReturnType<typeof useSeeFollowingQuery>;
+export type SeeFollowingLazyQueryHookResult = ReturnType<typeof useSeeFollowingLazyQuery>;
+export type SeeFollowingQueryResult = Apollo.QueryResult<SeeFollowingQuery, SeeFollowingQueryVariables>;
 export const CreateAccountDocument = gql`
     mutation createAccount($firstname: String!, $lastname: String, $email: String!, $username: String!, $password: String!) {
   createAccount(

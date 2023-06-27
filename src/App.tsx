@@ -45,6 +45,16 @@ function App() {
                   <EditProfile />
                 </Layout>
               </Route>
+              <Route path={`/:username/followers`}>
+                <Layout>
+                  <Profile />
+                </Layout>
+              </Route>
+              <Route path={`/:username/following`}>
+                <Layout>
+                  <Profile />
+                </Layout>
+              </Route>
               <Route path={`/:username`}>
                 <Layout>
                   <Profile />
