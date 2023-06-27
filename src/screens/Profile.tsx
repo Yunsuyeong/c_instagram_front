@@ -146,6 +146,7 @@ const Title = styled.h3`
 `;
 
 const Follower = styled.div`
+  width: 100%;
   display: flex;
   padding: 5px 5px;
 `;
@@ -168,6 +169,18 @@ const Ffollow = styled.p`
   font-size: 16px;
   font-weight: bold;
   color: skyblue;
+`;
+
+const Fbutton = styled.button`
+  position: relative;
+  left: 100%;
+  border: none;
+  background-color: lightgray;
+  text-align: center;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 10px 5px;
+  cursor: pointer;
 `;
 
 const See_Profile_Query = gql`
@@ -540,16 +553,30 @@ const Profile = () => {
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "3px",
+                    justifyContent: "center",
+                    gap: "50px",
                   }}
                 >
-                  <Fname>{following?.username}</Fname>
-                  <Fname>
-                    {following?.firstName} {following?.lastName}
-                  </Fname>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "3px",
+                    }}
+                  >
+                    <Fname>{following?.username}</Fname>
+                    <Fname>
+                      {following?.firstName} {following?.lastName}
+                    </Fname>
+                  </div>
+                  {!following?.isFollowing ? (
+                    <Ffollow> * 팔로우</Ffollow>
+                  ) : (
+                    <Fbutton onClick={() => unfollowUser()}>
+                      팔로우 취소
+                    </Fbutton>
+                  )}
                 </div>
-                {!following?.isFollowing ? <Ffollow> * 팔로우</Ffollow> : null}
               </Follower>
             ))}
           </Container>

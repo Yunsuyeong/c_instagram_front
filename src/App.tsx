@@ -12,6 +12,7 @@ import Layout from "./components/Layout";
 import Profile from "./screens/Profile";
 import EditProfile from "./screens/EditProfile";
 import Post from "./screens/Post";
+import Upload from "./screens/Upload";
 
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -37,6 +38,11 @@ function App() {
                   <SignUp />
                 </Route>
               ) : null}
+              <Route path={`/upload`}>
+                <Layout>
+                  <Upload />
+                </Layout>
+              </Route>
               <Route path={`/p/:photoid`}>
                 <Post />
               </Route>

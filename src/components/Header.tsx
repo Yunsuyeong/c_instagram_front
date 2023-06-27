@@ -8,6 +8,7 @@ import { Link, useHistory } from "react-router-dom";
 import routes from "../routes";
 import useUser from "../hooks/useUser";
 import Avatar from "./Avatar";
+import { faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 
 const SHeader = styled.div`
   width: 100%;
@@ -62,6 +63,9 @@ const Header = () => {
             <IconsContainer>
               <Icon onClick={() => history.push("/")}>
                 <FontAwesomeIcon icon={faHome} size="lg" />
+              </Icon>
+              <Icon onClick={() => history.push("/upload")}>
+                <FontAwesomeIcon icon={faSquarePlus} size="lg" />
               </Icon>
               <Icon>
                 <FontAwesomeIcon icon={faCompass} size="lg" />
