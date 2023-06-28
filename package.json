@@ -16,6 +16,7 @@
     "@types/node": "^16.18.25",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.1",
+    "apollo-upload-client": "^17.0.0",
     "framer-motion": "^10.12.17",
     "graphql": "^16.6.0",
     "react": "^18.2.0",
@@ -62,6 +63,7 @@
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
+    "@types/apollo-upload-client": "^17.0.2",
     "@types/react-router-dom": "^5.3.3",
     "@types/sanitize-html": "^2.9.0",
     "@types/styled-components": "^5.1.26"
