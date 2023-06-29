@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import useUser from "../hooks/useUser";
 import PostComment from "../components/feed/PostComment";
 import PageTitle from "../components/PageTitle";
+import { Comment_Fragment, Photo_Fragment } from "../fragments";
 
 interface IParams {
   photoid: string;
@@ -138,32 +139,22 @@ const PostCommentInput = styled.input`
 const Photo_Query = gql`
   query seePhoto($id: Int!) {
     seePhoto(id: $id) {
-      id
+      ...PhotoFragment
       user {
         username
         avatar
       }
-      file
-      caption
-      likes
-      commentNumber
       comments {
-        user {
-          username
-          avatar
-        }
-        id
-        payload
-        createdAt
+        ...CommentFragment
       }
       hashtags {
         id
         hashtag
       }
-      createdAt
-      isLiked
     }
   }
+  ${Photo_Fragment}
+  ${Comment_Fragment}
 `;
 
 const Create_Comment_Mutation = gql`

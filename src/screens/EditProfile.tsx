@@ -83,7 +83,7 @@ const EditProfile = () => {
         message: error ? error : "",
       });
     }
-    history.push(`${editUsername}`, {
+    history.push(`/${editUsername}`, {
       message: "Profile Edited",
       username,
       email,

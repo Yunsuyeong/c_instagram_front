@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Button from "../components/auth/Button";
 import PageTitle from "../components/PageTitle";
 import { FatText } from "../components/shared";
-import { Photo_Fragment } from "../fragments";
+import { User_Fragment } from "../fragments";
 import {
   FollowUserMutation,
   SeeFollowersQuery,
@@ -186,22 +186,35 @@ const Fbutton = styled.button`
 const See_Profile_Query = gql`
   query seeProfile($username: String!) {
     seeProfile(username: $username) {
-      id
-      firstName
-      lastName
-      username
-      bio
-      avatar
-      photos {
-        ...PhotoFragment
-      }
-      totalFollowing
-      totalFollowers
-      isMe
-      isFollowing
+      ...UserFragment
     }
   }
-  ${Photo_Fragment}
+  ${User_Fragment}
+`;
+
+const See_Followers_Query = gql`
+  query seeFollowers($username: String!, $page: Int!) {
+    seeFollowers(username: $username, page: $page) {
+      ok
+      followers {
+        ...UserFragment
+      }
+      totalPages
+    }
+  }
+  ${User_Fragment}
+`;
+
+const See_Following_Query = gql`
+  query seeFollowing($username: String!) {
+    seeFollowing(username: $username) {
+      ok
+      following {
+        ...UserFragment
+      }
+    }
+  }
+  ${User_Fragment}
 `;
 
 const Follow_User_Mutation = gql`
@@ -216,41 +229,6 @@ const Unfollow_User_Mutation = gql`
   mutation unfollowUser($username: String!) {
     unfollowUser(username: $username) {
       ok
-    }
-  }
-`;
-
-const See_Followers_Query = gql`
-  query seeFollowers($username: String!, $page: Int!) {
-    seeFollowers(username: $username, page: $page) {
-      ok
-      followers {
-        id
-        username
-        firstName
-        lastName
-        bio
-        isFollowing
-        avatar
-      }
-      totalPages
-    }
-  }
-`;
-
-const See_Following_Query = gql`
-  query seeFollowing($username: String!) {
-    seeFollowing(username: $username) {
-      ok
-      following {
-        id
-        username
-        firstName
-        lastName
-        bio
-        isFollowing
-        avatar
-      }
     }
   }
 `;
