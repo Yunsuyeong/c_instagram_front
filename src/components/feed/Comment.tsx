@@ -84,7 +84,7 @@ const Comment = ({ id, photoId, author, payload, isMine }: IcommentProps) => {
             {/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w-]+/g.test(word) ? (
               <Link to={`/hashtags/${word}`}>{word}</Link>
             ) : /@[\w-]+/.test(word) ? (
-              <Link to={`/user/${word}`}>{word}</Link>
+              <Link to={`/user/${word.substring(1)}`}>{word}</Link>
             ) : (
               word
             )}{" "}

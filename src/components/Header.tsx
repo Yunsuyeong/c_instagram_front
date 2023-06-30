@@ -15,8 +15,8 @@ import {
 import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { User_Fragment } from "../fragments";
-import { SearchUsersQuery } from "../generated/graphql";
+import { Photo_Fragment, User_Fragment } from "../fragments";
+import { SearchPhotosQuery, SearchUsersQuery } from "../generated/graphql";
 
 interface ISearchForm {
   keyword: string;
@@ -83,7 +83,7 @@ const SearchInput = styled(motion.input)`
 `;
 
 const ResultContainer = styled(motion.div)`
-  width: 30vw;
+  width: 20vw;
   height: 40px;
   display: flex;
   border: 1px solid ${(props) => props.theme.borderColor};
@@ -102,6 +102,11 @@ const UserAvatar = styled.img`
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 50%;
+`;
+
+const Hashtags = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const Username = styled.h3`
@@ -128,6 +133,15 @@ const Search_Users_Query = gql`
     }
   }
   ${User_Fragment}
+`;
+
+export const Search_Photos_Query = gql`
+  query searchPhotos($keyword: String!) {
+    searchPhotos(keyword: $keyword) {
+      ...PhotoFragment
+    }
+  }
+  ${Photo_Fragment}
 `;
 
 const Header = () => {
@@ -162,7 +176,7 @@ const Header = () => {
     Search_Users_Query,
     {
       variables: {
-        keyword: watch("keyword"),
+        keyword: Keyword,
       },
     }
   );
@@ -177,6 +191,16 @@ const Header = () => {
   const onValid = ({ keyword }: ISearchForm) => {
     console.log(keyword);
   };
+  const { data: photoData, loading: photoLoading } =
+    useQuery<SearchPhotosQuery>(Search_Photos_Query, {
+      variables: {
+        keyword: Keyword,
+      },
+    });
+  let array2 = photoData?.searchPhotos;
+  if (Keyword === "") {
+    array2 = [];
+  }
   return (
     <SHeader>
       <Wrapper>
@@ -231,7 +255,7 @@ const Header = () => {
           )}
         </Column>
         <Column>
-          {userData ? (
+          {userData && Keyword.indexOf("#") !== 0 ? (
             loading ? (
               <Icon>
                 <FontAwesomeIcon icon={faTimesCircle} />
@@ -249,6 +273,28 @@ const Header = () => {
                 ))}
               </ResultContainer>
             )
+          ) : photoData && Keyword.indexOf("#") === 0 ? (
+            <ResultContainer>
+              {array2?.map((photo) => (
+                <Result key={photo?.id}>
+                  <UserAvatar src={photo?.file} />
+                  <Hashtags>
+                    {photo?.hashtags?.map((hashtag) => (
+                      <Username
+                        onClick={() =>
+                          history.push(
+                            `/hashtags/${hashtag?.hashtag.substring(1)}`
+                          )
+                        }
+                        key={hashtag?.id}
+                      >
+                        {hashtag?.hashtag}
+                      </Username>
+                    ))}
+                  </Hashtags>
+                </Result>
+              ))}
+            </ResultContainer>
           ) : (
             <ResultContainer></ResultContainer>
           )}

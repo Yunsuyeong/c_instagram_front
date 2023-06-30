@@ -13,6 +13,7 @@ import Profile from "./screens/Profile";
 import EditProfile from "./screens/EditProfile";
 import Post from "./screens/Post";
 import Upload from "./screens/Upload";
+import Photos from "./screens/Photos";
 
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -38,6 +39,11 @@ function App() {
                   <SignUp />
                 </Route>
               ) : null}
+              <Route path={`/hashtags/:keyword`}>
+                <Layout>
+                  <Photos />
+                </Layout>
+              </Route>
               <Route path={`/upload`}>
                 <Layout>
                   <Upload />

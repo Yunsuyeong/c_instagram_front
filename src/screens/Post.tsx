@@ -123,19 +123,6 @@ const Likes = styled(FatText)`
   margin-left: 10px;
 `;
 
-const PostCommentContainer = styled.div`
-  margin-top: 10px;
-  padding-top: 15px;
-  padding-bottom: 10px;
-`;
-
-const PostCommentInput = styled.input`
-  width: 100%;
-  &::placeholder {
-    font-size: 12px;
-  }
-`;
-
 const Photo_Query = gql`
   query seePhoto($id: Int!) {
     seePhoto(id: $id) {

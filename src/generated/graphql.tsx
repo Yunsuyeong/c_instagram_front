@@ -335,7 +335,14 @@ export type SearchUsersQueryVariables = Exact<{
 }>;
 
 
-export type SearchUsersQuery = { __typename?: 'Query', searchUsers?: Array<{ __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, following?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null, isFollowing: boolean } | null> | null, followers?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null, isFollowing: boolean } | null> | null, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean } | null> | null } | null> | null };
+export type SearchUsersQuery = { __typename?: 'Query', searchUsers?: Array<{ __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, following?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null, isFollowing: boolean } | null> | null, followers?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null, isFollowing: boolean } | null> | null, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null } | null> | null };
+
+export type SearchPhotosQueryVariables = Exact<{
+  keyword: Scalars['String'];
+}>;
+
+
+export type SearchPhotosQuery = { __typename?: 'Query', searchPhotos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null };
 
 export type DeleteCommentMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -361,9 +368,9 @@ export type ToggleLikeMutationVariables = Exact<{
 
 export type ToggleLikeMutation = { __typename?: 'Mutation', toggleLike: { __typename?: 'MutationResponse', ok: boolean, error?: string | null } };
 
-export type PhotoFragmentFragment = { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean };
+export type PhotoFragmentFragment = { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null };
 
-export type UserFragmentFragment = { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean } | null> | null };
+export type UserFragmentFragment = { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null };
 
 export type CommentFragmentFragment = { __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } };
 
@@ -386,7 +393,7 @@ export type SeeFeedQueryVariables = Exact<{
 }>;
 
 
-export type SeeFeedQuery = { __typename?: 'Query', seeFeed?: Array<{ __typename?: 'Photo', caption?: string | null, createdAt: string, isMine: boolean, id: number, file: string, likes: number, commentNumber: number, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null } | null> | null };
+export type SeeFeedQuery = { __typename?: 'Query', seeFeed?: Array<{ __typename?: 'Photo', caption?: string | null, createdAt: string, isMine: boolean, id: number, file: string, likes: number, commentNumber: number, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -401,14 +408,14 @@ export type SeePhotoQueryVariables = Exact<{
 }>;
 
 
-export type SeePhotoQuery = { __typename?: 'Query', seePhoto?: { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string } | null> | null } | null };
+export type SeePhotoQuery = { __typename?: 'Query', seePhoto?: { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, user: { __typename?: 'User', username: string, avatar?: string | null }, comments?: Array<{ __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } } | null> | null, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null };
 
 export type SeeProfileQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean } | null> | null } | null };
+export type SeeProfileQuery = { __typename?: 'Query', seeProfile?: { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null } | null };
 
 export type SeeFollowersQueryVariables = Exact<{
   username: Scalars['String'];
@@ -416,14 +423,14 @@ export type SeeFollowersQueryVariables = Exact<{
 }>;
 
 
-export type SeeFollowersQuery = { __typename?: 'Query', seeFollowers: { __typename?: 'SeeFollowersResult', ok: boolean, totalPages?: number | null, followers?: Array<{ __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean } | null> | null } | null> | null } };
+export type SeeFollowersQuery = { __typename?: 'Query', seeFollowers: { __typename?: 'SeeFollowersResult', ok: boolean, totalPages?: number | null, followers?: Array<{ __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null } | null> | null } };
 
 export type SeeFollowingQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type SeeFollowingQuery = { __typename?: 'Query', seeFollowing: { __typename?: 'SeeFollowingResult', ok: boolean, following?: Array<{ __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean } | null> | null } | null> | null } };
+export type SeeFollowingQuery = { __typename?: 'Query', seeFollowing: { __typename?: 'SeeFollowingResult', ok: boolean, following?: Array<{ __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null } | null> | null } };
 
 export type FollowUserMutationVariables = Exact<{
   username: Scalars['String'];
@@ -477,6 +484,12 @@ export const PhotoFragmentFragmentDoc = gql`
   caption
   likes
   commentNumber
+  hashtags {
+    id
+    hashtag
+    totalPhotos
+    createdAt
+  }
   createdAt
   isLiked
 }
@@ -557,6 +570,41 @@ export function useSearchUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type SearchUsersQueryHookResult = ReturnType<typeof useSearchUsersQuery>;
 export type SearchUsersLazyQueryHookResult = ReturnType<typeof useSearchUsersLazyQuery>;
 export type SearchUsersQueryResult = Apollo.QueryResult<SearchUsersQuery, SearchUsersQueryVariables>;
+export const SearchPhotosDocument = gql`
+    query searchPhotos($keyword: String!) {
+  searchPhotos(keyword: $keyword) {
+    ...PhotoFragment
+  }
+}
+    ${PhotoFragmentFragmentDoc}`;
+
+/**
+ * __useSearchPhotosQuery__
+ *
+ * To run a query within a React component, call `useSearchPhotosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPhotosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPhotosQuery({
+ *   variables: {
+ *      keyword: // value for 'keyword'
+ *   },
+ * });
+ */
+export function useSearchPhotosQuery(baseOptions: Apollo.QueryHookOptions<SearchPhotosQuery, SearchPhotosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPhotosQuery, SearchPhotosQueryVariables>(SearchPhotosDocument, options);
+      }
+export function useSearchPhotosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPhotosQuery, SearchPhotosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPhotosQuery, SearchPhotosQueryVariables>(SearchPhotosDocument, options);
+        }
+export type SearchPhotosQueryHookResult = ReturnType<typeof useSearchPhotosQuery>;
+export type SearchPhotosLazyQueryHookResult = ReturnType<typeof useSearchPhotosLazyQuery>;
+export type SearchPhotosQueryResult = Apollo.QueryResult<SearchPhotosQuery, SearchPhotosQueryVariables>;
 export const DeleteCommentDocument = gql`
     mutation deleteComment($id: Int!) {
   deleteComment(id: $id) {

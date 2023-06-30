@@ -7,6 +7,12 @@ export const Photo_Fragment = gql`
     caption
     likes
     commentNumber
+    hashtags {
+      id
+      hashtag
+      totalPhotos
+      createdAt
+    }
     createdAt
     isLiked
   }
