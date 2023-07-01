@@ -5,6 +5,7 @@ import { CreateCommentMutation } from "../../generated/graphql";
 import useUser from "../../hooks/useUser";
 import { FatText } from "../shared";
 import Comment from "./Comment";
+import { useHistory } from "react-router-dom";
 
 export interface ICommentForm {
   payload: string;
@@ -27,7 +28,8 @@ const CommentCount = styled.span`
   margin: 10px 0px;
   display: block;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 14px;
+  cursor: pointer;
 `;
 
 const PostCommentContainer = styled.div`
@@ -61,6 +63,7 @@ const Comments = ({
   comments,
   photoId,
 }: ICommentsProps) => {
+  const history = useHistory();
   const { data: userData } = useUser();
   const { register, handleSubmit, setValue, getValues } =
     useForm<ICommentForm>();
@@ -132,8 +135,9 @@ const Comments = ({
   return (
     <CommentsContainer>
       <Comment author={author} payload={caption} />
-      <CommentCount>
-        {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
+      <CommentCount onClick={() => history.push(`/p/${photoId}`)}>
+        {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`} 모두
+        보기
       </CommentCount>
       {comments?.map((comment: any) => (
         <Comment

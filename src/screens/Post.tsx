@@ -2,9 +2,13 @@ import { Helmet } from "react-helmet-async";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { CreateCommentMutation, SeePhotoQuery } from "../generated/graphql";
+import {
+  CreateCommentMutation,
+  SeePhotoLikesQuery,
+  SeePhotoQuery,
+} from "../generated/graphql";
 import {
   faBookmark,
   faComment,
@@ -17,7 +21,8 @@ import { useForm } from "react-hook-form";
 import useUser from "../hooks/useUser";
 import PostComment from "../components/feed/PostComment";
 import PageTitle from "../components/PageTitle";
-import { Comment_Fragment, Photo_Fragment } from "../fragments";
+import { Comment_Fragment, Photo_Fragment, User_Fragment } from "../fragments";
+import { useEffect, useState } from "react";
 
 interface IParams {
   photoid: string;
@@ -29,13 +34,16 @@ const Background = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: gray;
+  opacity: 0.5;
 `;
 
 const PostContainer = styled.div`
   display: flex;
-  position: relative;
-  width: 70%;
+  position: fixed;
+  bottom: 5vh;
+  left: 10vw;
+  width: 80%;
   height: 90%;
   background-color: white;
 `;
@@ -121,6 +129,51 @@ const Likes = styled(FatText)`
   display: block;
   margin-top: 10px;
   margin-left: 10px;
+  cursor: pointer;
+`;
+
+const Container = styled.div`
+  position: fixed;
+  top: 25vh;
+  left: 30vw;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 40%;
+  height: 50%;
+  background-color: white;
+`;
+
+const Title = styled.h3`
+  font-size: 18px;
+  font-weight: 600;
+  padding: 15px 0px;
+`;
+
+const Liker = styled.div`
+  width: 100%;
+  display: flex;
+  padding: 5px 5px;
+`;
+
+const LAvatar = styled.img`
+  height: 35px;
+  width: 35px;
+  background-color: #2c2c2c;
+  margin-left: 10px;
+  margin-right: 20px;
+  border-radius: 50%;
+`;
+
+const Lname = styled.h3`
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const Lfollow = styled.p`
+  font-size: 16px;
+  font-weight: bold;
+  color: skyblue;
 `;
 
 const Photo_Query = gql`
@@ -163,7 +216,17 @@ const Toggle_Like_Mutation = gql`
   }
 `;
 
+const See_Photo_Likes_Query = gql`
+  query seePhotoLikes($id: Int!) {
+    seePhotoLikes(id: $id) {
+      ...UserFragment
+    }
+  }
+  ${User_Fragment}
+`;
+
 const Post = () => {
+  const history = useHistory();
   const { photoid } = useParams<IParams>();
   const id = +photoid;
   const { data: userData } = useUser();
@@ -269,11 +332,33 @@ const Post = () => {
     },
     update: updateToggleLike,
   });
+  const { data: likesData } = useQuery<SeePhotoLikesQuery>(
+    See_Photo_Likes_Query,
+    {
+      variables: {
+        id,
+      },
+    }
+  );
+  console.log(likesData);
+  const [isLikes, setIsLikes] = useState<boolean>(false);
+  const onLikesChange = () => {
+    setIsLikes((prev) => !prev);
+  };
+  useEffect(() => {
+    console.log("isLikes is ", isLikes);
+  }, [isLikes]);
+  const onBack = () => {
+    setIsLikes(false);
+    history.goBack();
+  };
   return (
-    <Background>
-      <Helmet>
-        <title>Instagram</title>
-      </Helmet>
+    <>
+      <Background onClick={() => onBack()}>
+        <Helmet>
+          <title>Instagram</title>
+        </Helmet>
+      </Background>
       <PostContainer>
         <PhotoImage src={data?.seePhoto?.file} />
         <div>
@@ -321,13 +406,40 @@ const Post = () => {
                   <FontAwesomeIcon size={"2x"} icon={faBookmark} />
                 </div>
               </PhotoActions>
-              <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
+              <Likes onClick={() => onLikesChange()}>
+                {likes === 1 ? "1 like" : `${likes} likes`}
+              </Likes>
             </div>
             <PostComment photoId={id} />
           </PostData>
         </div>
       </PostContainer>
-    </Background>
+      {isLikes && (
+        <Container>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Title>팔로워</Title>
+          </div>
+          {likesData?.seePhotoLikes?.map((like) => (
+            <Liker key={like?.id}>
+              <LAvatar src={like?.avatar!} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "3px",
+                }}
+              >
+                <Lname>{like?.username}</Lname>
+                <Lname>
+                  {like?.firstName} {like?.lastName}
+                </Lname>
+              </div>
+              {!like?.isFollowing ? <Lfollow> * 팔로우</Lfollow> : null}
+            </Liker>
+          ))}
+        </Container>
+      )}
+    </>
   );
 };
 

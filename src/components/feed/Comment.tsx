@@ -82,9 +82,9 @@ const Comment = ({ id, photoId, author, payload, isMine }: IcommentProps) => {
         {payload?.split(" ").map((word, index) => (
           <React.Fragment key={index}>
             {/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w-]+/g.test(word) ? (
-              <Link to={`/hashtags/${word}`}>{word}</Link>
+              <Link to={`/hashtags/${word.substring(1)}`}>{word}</Link>
             ) : /@[\w-]+/.test(word) ? (
-              <Link to={`/user/${word.substring(1)}`}>{word}</Link>
+              <Link to={`/user/${word}`}>{word}</Link>
             ) : (
               word
             )}{" "}
