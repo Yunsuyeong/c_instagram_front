@@ -344,6 +344,11 @@ export type SearchPhotosQueryVariables = Exact<{
 
 export type SearchPhotosQuery = { __typename?: 'Query', searchPhotos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null };
 
+export type SeeRoomsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SeeRoomsQuery = { __typename?: 'Query', seeRooms?: Array<{ __typename?: 'Room', id: number, unreadTotal: number, createdAt: string, updatedAt: string, users?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null } | null> | null, messages?: Array<{ __typename?: 'Message', id: number, payload: string, read: boolean, createdAt: string, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null> | null } | null> | null };
+
 export type DeleteCommentMutationVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -373,6 +378,8 @@ export type PhotoFragmentFragment = { __typename?: 'Photo', id: number, file: st
 export type UserFragmentFragment = { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null };
 
 export type CommentFragmentFragment = { __typename?: 'Comment', id: number, payload: string, isMine: boolean, createdAt: string, user: { __typename?: 'User', username: string, avatar?: string | null } };
+
+export type RoomFragmentFragment = { __typename?: 'Room', id: number, unreadTotal: number, createdAt: string, updatedAt: string, users?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null } | null> | null, messages?: Array<{ __typename?: 'Message', id: number, payload: string, read: boolean, createdAt: string, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null> | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -453,6 +460,13 @@ export type UnfollowUserMutationVariables = Exact<{
 
 export type UnfollowUserMutation = { __typename?: 'Mutation', unfollowUser: { __typename?: 'MutationResponse', ok: boolean } };
 
+export type SeeRoomQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type SeeRoomQuery = { __typename?: 'Query', seeRoom?: { __typename?: 'Room', id: number, unreadTotal: number, createdAt: string, updatedAt: string, users?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null } | null> | null, messages?: Array<{ __typename?: 'Message', id: number, payload: string, read: boolean, createdAt: string, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null> | null } | null };
+
 export type CreateAccountMutationVariables = Exact<{
   firstname: Scalars['String'];
   lastname?: InputMaybe<Scalars['String']>;
@@ -528,6 +542,30 @@ export const CommentFragmentFragmentDoc = gql`
   payload
   isMine
   createdAt
+}
+    `;
+export const RoomFragmentFragmentDoc = gql`
+    fragment RoomFragment on Room {
+  id
+  unreadTotal
+  users {
+    id
+    username
+    avatar
+  }
+  messages {
+    id
+    payload
+    user {
+      id
+      username
+      avatar
+    }
+    read
+    createdAt
+  }
+  createdAt
+  updatedAt
 }
     `;
 export const SearchUsersDocument = gql`
@@ -612,6 +650,40 @@ export function useSearchPhotosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type SearchPhotosQueryHookResult = ReturnType<typeof useSearchPhotosQuery>;
 export type SearchPhotosLazyQueryHookResult = ReturnType<typeof useSearchPhotosLazyQuery>;
 export type SearchPhotosQueryResult = Apollo.QueryResult<SearchPhotosQuery, SearchPhotosQueryVariables>;
+export const SeeRoomsDocument = gql`
+    query seeRooms {
+  seeRooms {
+    ...RoomFragment
+  }
+}
+    ${RoomFragmentFragmentDoc}`;
+
+/**
+ * __useSeeRoomsQuery__
+ *
+ * To run a query within a React component, call `useSeeRoomsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeRoomsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeRoomsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSeeRoomsQuery(baseOptions?: Apollo.QueryHookOptions<SeeRoomsQuery, SeeRoomsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeRoomsQuery, SeeRoomsQueryVariables>(SeeRoomsDocument, options);
+      }
+export function useSeeRoomsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeRoomsQuery, SeeRoomsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeRoomsQuery, SeeRoomsQueryVariables>(SeeRoomsDocument, options);
+        }
+export type SeeRoomsQueryHookResult = ReturnType<typeof useSeeRoomsQuery>;
+export type SeeRoomsLazyQueryHookResult = ReturnType<typeof useSeeRoomsLazyQuery>;
+export type SeeRoomsQueryResult = Apollo.QueryResult<SeeRoomsQuery, SeeRoomsQueryVariables>;
 export const DeleteCommentDocument = gql`
     mutation deleteComment($id: Int!) {
   deleteComment(id: $id) {
@@ -1134,6 +1206,41 @@ export function useUnfollowUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnfollowUserMutationHookResult = ReturnType<typeof useUnfollowUserMutation>;
 export type UnfollowUserMutationResult = Apollo.MutationResult<UnfollowUserMutation>;
 export type UnfollowUserMutationOptions = Apollo.BaseMutationOptions<UnfollowUserMutation, UnfollowUserMutationVariables>;
+export const SeeRoomDocument = gql`
+    query seeRoom($id: Int!) {
+  seeRoom(id: $id) {
+    ...RoomFragment
+  }
+}
+    ${RoomFragmentFragmentDoc}`;
+
+/**
+ * __useSeeRoomQuery__
+ *
+ * To run a query within a React component, call `useSeeRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSeeRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSeeRoomQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSeeRoomQuery(baseOptions: Apollo.QueryHookOptions<SeeRoomQuery, SeeRoomQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SeeRoomQuery, SeeRoomQueryVariables>(SeeRoomDocument, options);
+      }
+export function useSeeRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SeeRoomQuery, SeeRoomQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SeeRoomQuery, SeeRoomQueryVariables>(SeeRoomDocument, options);
+        }
+export type SeeRoomQueryHookResult = ReturnType<typeof useSeeRoomQuery>;
+export type SeeRoomLazyQueryHookResult = ReturnType<typeof useSeeRoomLazyQuery>;
+export type SeeRoomQueryResult = Apollo.QueryResult<SeeRoomQuery, SeeRoomQueryVariables>;
 export const CreateAccountDocument = gql`
     mutation createAccount($firstname: String!, $lastname: String, $email: String!, $username: String!, $password: String!) {
   createAccount(

@@ -49,3 +49,28 @@ export const Comment_Fragment = gql`
     createdAt
   }
 `;
+
+export const Room_Fragment = gql`
+  fragment RoomFragment on Room {
+    id
+    unreadTotal
+    users {
+      id
+      username
+      avatar
+    }
+    messages {
+      id
+      payload
+      user {
+        id
+        username
+        avatar
+      }
+      read
+      createdAt
+    }
+    createdAt
+    updatedAt
+  }
+`;

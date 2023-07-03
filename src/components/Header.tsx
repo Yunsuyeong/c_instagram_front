@@ -9,6 +9,7 @@ import routes from "../routes";
 import useUser from "../hooks/useUser";
 import Avatar from "./Avatar";
 import {
+  faPaperPlane,
   faSquarePlus,
   faTimesCircle,
 } from "@fortawesome/free-regular-svg-icons";
@@ -45,6 +46,7 @@ const Column = styled.div``;
 const IconsContainer = styled.div`
   display: flex;
   align-items: center;
+  gap: 5px;
 `;
 
 const Icon = styled.span`
@@ -215,6 +217,9 @@ const Header = () => {
               </Icon>
               <Icon onClick={() => history.push("/upload")}>
                 <FontAwesomeIcon icon={faSquarePlus} size="lg" />
+              </Icon>
+              <Icon onClick={() => history.push("/direct")}>
+                <FontAwesomeIcon icon={faPaperPlane} size="lg" />
               </Icon>
               <Icon>
                 <FontAwesomeIcon icon={faCompass} size="lg" />

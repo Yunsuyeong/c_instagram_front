@@ -14,6 +14,8 @@ import EditProfile from "./screens/EditProfile";
 import Post from "./screens/Post";
 import Upload from "./screens/Upload";
 import Photos from "./screens/Photos";
+import Rooms from "./screens/Rooms";
+import Room from "./screens/Room";
 
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -51,6 +53,16 @@ function App() {
               </Route>
               <Route path={`/p/:photoid`}>
                 <Post />
+              </Route>
+              <Route path={`/direct/:roomid`}>
+                <Layout>
+                  <Room />
+                </Layout>
+              </Route>
+              <Route path={`/direct`}>
+                <Layout>
+                  <Rooms />
+                </Layout>
               </Route>
               <Route path={`/accounts/edit/:username`}>
                 <Layout>
