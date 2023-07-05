@@ -1,15 +1,21 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
 import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/auth/Button";
+import { useEffect, useState } from "react";
+import SendMessage, { Room_Updates } from "../components/feed/SendMessage";
 import PageTitle from "../components/PageTitle";
 import RoomList from "../components/RoomList";
 import { Room_Fragment } from "../fragments";
-import { SeeRoomQuery } from "../generated/graphql";
+import { SeeRoomQuery, SendMessageMutation } from "../generated/graphql";
 import useUser from "../hooks/useUser";
 
 interface IParams {
   roomid: string;
+}
+
+interface IMessageForm {
+  payload: string;
 }
 
 const Container = styled.div`
@@ -17,7 +23,7 @@ const Container = styled.div`
   height: 90vh;
 `;
 
-const MessageContainer = styled.div`
+const MessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 70vw;
@@ -46,8 +52,10 @@ const Username = styled.h3`
 `;
 
 const Messages = styled.div`
+  height: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ProfileHeader = styled.div`
@@ -72,7 +80,50 @@ const PButton = styled(Button).attrs({
   padding: 7px 10px;
 `;
 
-const See_Room_Query = gql`
+const SearchForm = styled.form`
+  width: 70%;
+  position: fixed;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 12px;
+`;
+
+const MessageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 20px 10px;
+`;
+
+const Message = styled.div<{ outGoing: boolean }>`
+  position: relative;
+  flex-direction: ${(props) => (props.outGoing ? "row" : "row-reverse")};
+  display: flex;
+`;
+
+const Author = styled.div``;
+
+const Mavatar = styled.img`
+  width: 20px;
+  height: 20px;
+  background-color: #2c2c2c;
+  border-radius: 50%;
+`;
+
+const Payload = styled.p`
+  background-color: rgba(255, 255, 255, 0.3);
+  font-size: 16px;
+  margin: 0px 10px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+export const See_Room_Query = gql`
   query seeRoom($id: Int!) {
     seeRoom(id: $id) {
       ...RoomFragment
@@ -94,12 +145,18 @@ const Room = () => {
   const Name = roomData?.seeRoom?.users
     ?.map((user) => user?.username)
     ?.find((name) => name !== data?.me?.username);
+  const a = roomData?.seeRoom?.messages;
+  let array;
+  if (a) {
+    array = [...a];
+    array.reverse();
+  }
   return (
     <div>
       <PageTitle title={"Instagram * Direct"}></PageTitle>
       <Container>
         <RoomList />
-        <MessageContainer>
+        <MessagesContainer>
           <Header>
             <Avatar src="" />
             <Username>{Name}</Username>
@@ -113,8 +170,23 @@ const Room = () => {
                 Go to Profile
               </PButton>
             </ProfileHeader>
+            <MessageContainer>
+              {array?.map((message) => (
+                <Message
+                  outGoing={message?.user?.username !== data?.me?.username}
+                  style={{ display: "flex" }}
+                  key={message?.id}
+                >
+                  <Author>
+                    <Mavatar src={message?.user?.avatar!} />
+                  </Author>
+                  <Payload>{message?.payload}</Payload>
+                </Message>
+              ))}
+            </MessageContainer>
           </Messages>
-        </MessageContainer>
+          <SendMessage roomId={roomId} />
+        </MessagesContainer>
       </Container>
     </div>
   );

@@ -373,6 +373,17 @@ export type ToggleLikeMutationVariables = Exact<{
 
 export type ToggleLikeMutation = { __typename?: 'Mutation', toggleLike: { __typename?: 'MutationResponse', ok: boolean, error?: string | null } };
 
+export type SendMessageMutationVariables = Exact<{
+  payload: Scalars['String'];
+  roomId?: InputMaybe<Scalars['Int']>;
+  userId?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'MutationResponse', ok: boolean, id?: number | null } };
+
+export type NewMessageFragment = { __typename?: 'Message', id: number, payload: string, read: boolean, user: { __typename?: 'User', username: string, avatar?: string | null } };
+
 export type PhotoFragmentFragment = { __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null };
 
 export type UserFragmentFragment = { __typename?: 'User', id: number, firstName: string, lastName?: string | null, username: string, bio?: string | null, avatar?: string | null, totalFollowing: number, totalFollowers: number, isMe: boolean, isFollowing: boolean, photos?: Array<{ __typename?: 'Photo', id: number, file: string, caption?: string | null, likes: number, commentNumber: number, createdAt: string, isLiked: boolean, hashtags?: Array<{ __typename?: 'Hashtag', id: number, hashtag: string, totalPhotos: number, createdAt: string } | null> | null } | null> | null };
@@ -467,6 +478,13 @@ export type SeeRoomQueryVariables = Exact<{
 
 export type SeeRoomQuery = { __typename?: 'Query', seeRoom?: { __typename?: 'Room', id: number, unreadTotal: number, createdAt: string, updatedAt: string, users?: Array<{ __typename?: 'User', id: number, username: string, avatar?: string | null } | null> | null, messages?: Array<{ __typename?: 'Message', id: number, payload: string, read: boolean, createdAt: string, user: { __typename?: 'User', id: number, username: string, avatar?: string | null } } | null> | null } | null };
 
+export type RoomUpdatesSubscriptionVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RoomUpdatesSubscription = { __typename?: 'Subscription', roomUpdates?: { __typename?: 'Message', id: number, payload: string, read: boolean, user: { __typename?: 'User', username: string, avatar?: string | null } } | null };
+
 export type CreateAccountMutationVariables = Exact<{
   firstname: Scalars['String'];
   lastname?: InputMaybe<Scalars['String']>;
@@ -496,6 +514,17 @@ export const BsNameFragmentDoc = gql`
     username
     avatar
   }
+}
+    `;
+export const NewMessageFragmentDoc = gql`
+    fragment NewMessage on Message {
+  id
+  payload
+  user {
+    username
+    avatar
+  }
+  read
 }
     `;
 export const PhotoFragmentFragmentDoc = gql`
@@ -787,6 +816,42 @@ export function useToggleLikeMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type ToggleLikeMutationHookResult = ReturnType<typeof useToggleLikeMutation>;
 export type ToggleLikeMutationResult = Apollo.MutationResult<ToggleLikeMutation>;
 export type ToggleLikeMutationOptions = Apollo.BaseMutationOptions<ToggleLikeMutation, ToggleLikeMutationVariables>;
+export const SendMessageDocument = gql`
+    mutation sendMessage($payload: String!, $roomId: Int, $userId: Int) {
+  sendMessage(payload: $payload, roomId: $roomId, userId: $userId) {
+    ok
+    id
+  }
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      payload: // value for 'payload'
+ *      roomId: // value for 'roomId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
 export const MeDocument = gql`
     query me {
   me {
@@ -1241,6 +1306,42 @@ export function useSeeRoomLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Se
 export type SeeRoomQueryHookResult = ReturnType<typeof useSeeRoomQuery>;
 export type SeeRoomLazyQueryHookResult = ReturnType<typeof useSeeRoomLazyQuery>;
 export type SeeRoomQueryResult = Apollo.QueryResult<SeeRoomQuery, SeeRoomQueryVariables>;
+export const RoomUpdatesDocument = gql`
+    subscription roomUpdates($id: Int!) {
+  roomUpdates(id: $id) {
+    id
+    payload
+    user {
+      username
+      avatar
+    }
+    read
+  }
+}
+    `;
+
+/**
+ * __useRoomUpdatesSubscription__
+ *
+ * To run a query within a React component, call `useRoomUpdatesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRoomUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomUpdatesSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRoomUpdatesSubscription(baseOptions: Apollo.SubscriptionHookOptions<RoomUpdatesSubscription, RoomUpdatesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<RoomUpdatesSubscription, RoomUpdatesSubscriptionVariables>(RoomUpdatesDocument, options);
+      }
+export type RoomUpdatesSubscriptionHookResult = ReturnType<typeof useRoomUpdatesSubscription>;
+export type RoomUpdatesSubscriptionResult = Apollo.SubscriptionResult<RoomUpdatesSubscription>;
 export const CreateAccountDocument = gql`
     mutation createAccount($firstname: String!, $lastname: String, $email: String!, $username: String!, $password: String!) {
   createAccount(

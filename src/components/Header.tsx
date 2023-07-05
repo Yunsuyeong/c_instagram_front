@@ -116,7 +116,7 @@ const Username = styled.h3`
   font-weight: 600;
 `;
 
-const Search_Users_Query = gql`
+export const Search_Users_Query = gql`
   query searchUsers($keyword: String!) {
     searchUsers(keyword: $keyword) {
       ...UserFragment

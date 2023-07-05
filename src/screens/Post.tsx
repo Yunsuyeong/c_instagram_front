@@ -4,11 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
-import {
-  CreateCommentMutation,
-  SeePhotoLikesQuery,
-  SeePhotoQuery,
-} from "../generated/graphql";
+import { SeePhotoLikesQuery, SeePhotoQuery } from "../generated/graphql";
 import {
   faBookmark,
   faComment,
@@ -16,9 +12,6 @@ import {
   faPaperPlane,
 } from "@fortawesome/free-regular-svg-icons";
 import { FatText } from "../components/shared";
-import Comments, { ICommentForm } from "../components/feed/Comments";
-import { useForm } from "react-hook-form";
-import useUser from "../hooks/useUser";
 import PostComment from "../components/feed/PostComment";
 import PageTitle from "../components/PageTitle";
 import { Comment_Fragment, Photo_Fragment, User_Fragment } from "../fragments";
@@ -197,16 +190,6 @@ const Photo_Query = gql`
   ${Comment_Fragment}
 `;
 
-const Create_Comment_Mutation = gql`
-  mutation createComment($photoId: Int!, $payload: String!) {
-    createComment(photoId: $photoId, payload: $payload) {
-      ok
-      error
-      id
-    }
-  }
-`;
-
 const Toggle_Like_Mutation = gql`
   mutation toggleLike($id: Int!) {
     toggleLike(id: $id) {
@@ -229,72 +212,6 @@ const Post = () => {
   const history = useHistory();
   const { photoid } = useParams<IParams>();
   const id = +photoid;
-  const { data: userData } = useUser();
-  const { register, handleSubmit, setValue, getValues } =
-    useForm<ICommentForm>();
-  const createCommentUpdate = (cache: any, result: any) => {
-    const { payload } = getValues();
-    setValue("payload", "");
-    const {
-      data: {
-        createComment: { ok, id },
-      },
-    } = result;
-    if (ok && userData?.me) {
-      const newComment = {
-        __typename: "Comment",
-        createdAt: Date.now(),
-        id,
-        isMine: true,
-        payload,
-        user: {
-          ...userData.me,
-        },
-      };
-      const newCacheComment = cache.writeFragment({
-        fragment: gql`
-          fragment BSName on Comment {
-            id
-            createdAt
-            isMine
-            payload
-            user {
-              username
-              avatar
-            }
-          }
-        `,
-        data: newComment,
-      });
-      cache.modify({
-        id: `Photo:${id}`,
-        fields: {
-          comments(prev: any) {
-            return [...prev, newCacheComment];
-          },
-          commentNumber(prev: number) {
-            return prev + 1;
-          },
-        },
-      });
-    }
-  };
-  const [createComment, { loading: createLoading }] =
-    useMutation<CreateCommentMutation>(Create_Comment_Mutation, {
-      update: createCommentUpdate,
-    });
-  const onValid = (form: ICommentForm) => {
-    const { payload } = form;
-    if (createLoading) {
-      return;
-    }
-    createComment({
-      variables: {
-        id,
-        payload,
-      },
-    });
-  };
   const { data } = useQuery<SeePhotoQuery>(Photo_Query, {
     variables: {
       id,
@@ -340,7 +257,6 @@ const Post = () => {
       },
     }
   );
-  console.log(likesData);
   const [isLikes, setIsLikes] = useState<boolean>(false);
   const onLikesChange = () => {
     setIsLikes((prev) => !prev);
