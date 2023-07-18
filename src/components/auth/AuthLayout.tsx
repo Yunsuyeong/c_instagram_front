@@ -3,7 +3,7 @@ import { faMoon } from "@fortawesome/free-regular-svg-icons";
 import { faSun } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { darkModeVar, disableDarkMode, enableDarkMode } from "../../apollo";
+import { darkModeVar, darkModeOn, darkModeOff } from "../../apollo";
 
 const Container = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ const AuthLayout = ({ children }: any) => {
     <Container>
       <Wrapper>{children}</Wrapper>
       <Footer>
-        <DarkModeBtn onClick={darkmode ? disableDarkMode : enableDarkMode}>
+        <DarkModeBtn onClick={darkmode ? darkModeOff : darkModeOn}>
           <FontAwesomeIcon icon={darkmode ? faSun : faMoon} />
         </DarkModeBtn>
       </Footer>

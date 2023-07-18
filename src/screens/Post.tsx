@@ -38,7 +38,7 @@ const PostContainer = styled.div`
   left: 10vw;
   width: 80%;
   height: 90%;
-  background-color: white;
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 const PhotoImage = styled.img`
@@ -134,7 +134,7 @@ const Container = styled.div`
   gap: 15px;
   width: 40%;
   height: 50%;
-  background-color: white;
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 const Title = styled.h3`

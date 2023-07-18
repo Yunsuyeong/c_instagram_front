@@ -3,14 +3,16 @@ import styled from "styled-components";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faCompass, faHome } from "@fortawesome/free-solid-svg-icons";
 import { gql, useQuery, useReactiveVar } from "@apollo/client";
-import { isLoggedInVar } from "../apollo";
+import { darkModeOff, darkModeOn, darkModeVar, isLoggedInVar } from "../apollo";
 import { Link, useHistory } from "react-router-dom";
 import routes from "../routes";
 import useUser from "../hooks/useUser";
 import Avatar from "./Avatar";
 import {
+  faMoon,
   faPaperPlane,
   faSquarePlus,
+  faSun,
   faTimesCircle,
 } from "@fortawesome/free-regular-svg-icons";
 import { motion, useAnimation } from "framer-motion";
@@ -80,7 +82,7 @@ const SearchInput = styled(motion.input)`
   padding: 5px 10px;
   padding-left: 40px;
   z-index: 1;
-  color: black;
+  color: ${(props) => props.theme.fontColor};
   font-size: 16px;
 `;
 
@@ -114,6 +116,12 @@ const Hashtags = styled.div`
 const Username = styled.h3`
   font-size: 16px;
   font-weight: 600;
+`;
+
+const Footer = styled.div``;
+
+const DarkModeBtn = styled.span`
+  cursor: pointer;
 `;
 
 export const Search_Users_Query = gql`
@@ -203,6 +211,7 @@ const Header = () => {
   if (Keyword === "") {
     array2 = [];
   }
+  const darkmode = useReactiveVar(darkModeVar);
   return (
     <SHeader>
       <Wrapper>
@@ -233,7 +242,7 @@ const Header = () => {
                 <motion.svg
                   onClick={toggleSearch}
                   animate={{ x: searchOpen ? 185 : 0 }}
-                  fill="black"
+                  fill={darkmode ? "white" : "black"}
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -305,6 +314,11 @@ const Header = () => {
           )}
         </Column>
       </Wrapper>
+      <Footer>
+        <DarkModeBtn onClick={darkmode ? darkModeOff : darkModeOn}>
+          <FontAwesomeIcon icon={darkmode ? faSun : faMoon} />
+        </DarkModeBtn>
+      </Footer>
     </SHeader>
   );
 };

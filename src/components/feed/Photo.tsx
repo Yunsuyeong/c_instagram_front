@@ -40,7 +40,7 @@ interface IPhotoProps {
 
 const PhotoContainer = styled.div`
   max-width: 615px;
-  background-color: white;
+  background-color: #66e0ff;
   border: 1px solid ${(props) => props.theme.borderColor};
   margin-bottom: 20px;
 `;

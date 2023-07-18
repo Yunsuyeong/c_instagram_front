@@ -1,18 +1,20 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { faBoltLightning } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/auth/Button";
 import Input from "../components/auth/Input";
 import { Search_Users_Query } from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import RoomList from "../components/RoomList";
-import { SearchUsersQuery } from "../generated/graphql";
+import { CreateRoomMutation, SearchUsersQuery } from "../generated/graphql";
 
 interface ISearchForm {
   keyword: string;
+  result: string;
 }
 
 const Container = styled.div<{ isSend: boolean }>`
@@ -54,7 +56,7 @@ const Scontainer = styled.div`
   gap: 15px;
   width: 40%;
   height: 50%;
-  background-color: white;
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 const SearchForm = styled.form`
@@ -100,8 +102,8 @@ const SendButton = styled(Button).attrs({})`
 `;
 
 const Create_Room_Mutation = gql`
-  mutation createRoom($userId: Int!) {
-    createRoom(userId: $userId) {
+  mutation createRoom($username: String!) {
+    createRoom(username: $username) {
       ok
       id
     }
@@ -109,6 +111,7 @@ const Create_Room_Mutation = gql`
 `;
 
 const Rooms = () => {
+  const history = useHistory();
   const [isSend, setIsSend] = useState<boolean>(false);
   const onSendChange = () => {
     setIsSend((prev) => !prev);
@@ -119,11 +122,12 @@ const Rooms = () => {
   useEffect(() => {
     console.log("isSend is ", isSend);
   }, [isSend]);
-  const { register, handleSubmit, setFocus, watch } = useForm<ISearchForm>({
-    defaultValues: {
-      keyword: "",
-    },
-  });
+  const { register, handleSubmit, getValues, watch, setError } =
+    useForm<ISearchForm>({
+      defaultValues: {
+        keyword: "",
+      },
+    });
   const Keyword = watch("keyword");
   const { data: userData, loading } = useQuery<SearchUsersQuery>(
     Search_Users_Query,
@@ -137,6 +141,29 @@ const Rooms = () => {
   if (Keyword === "") {
     array = [];
   }
+  const onCompleted = (data: CreateRoomMutation) => {
+    const {
+      createRoom: { ok, id },
+    } = data;
+    if (!ok) {
+      return setError("result", {
+        message: "Can't create Room",
+      });
+    }
+    history.push(`/direct/${id}`);
+  };
+  const [createRoom, { loading: createLoading }] =
+    useMutation<CreateRoomMutation>(Create_Room_Mutation, { onCompleted });
+  const onValid = ({ keyword }: ISearchForm) => {
+    if (createLoading) {
+      return;
+    }
+    createRoom({
+      variables: {
+        username: keyword,
+      },
+    });
+  };
   return (
     <div>
       <PageTitle title={"받은 메시지함 * Direct"}></PageTitle>
